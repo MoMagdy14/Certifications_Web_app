@@ -29,18 +29,43 @@ def certification():
     if request.method == "POST":
         course = request.form.get("course")
         email = request.form.get("email")
+        if (len(email) == 0):
+             return render_template("certification.html",error="Email cannot be  blank!")
         name = request.form.get("name")
+        if (len(name) == 0):
+             return render_template("certification.html",error="Name cannot be blank!")
+
         value = db.execute("Select * from members WHERE course=:course and email=:email", course=course,email=email)
-        if (True):
+
+        if (len(value) == 0):
+            return render_template("certification.html",error="Email or track is wrong!")
+
+        if (value[0]['status'] <= 0):
             db.execute("UPDATE members set status = status + 1 WHERE course=:course and email=:email", course=course,email=email)
-            im = Image.open(r'certificate.jpg')
-            d = ImageDraw.Draw(im)
-            location = (180, 270)
-            text_color = (0, 0, 0)
-            font = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf", 24)
-            d.text(location, name, fill = text_color,font=font)
-            im.save("certificate_" + "1" + ".pdf")
-            return send_file("certificate_" + "1" + ".pdf", as_attachment=True)
+            db.execute("UPDATE members set name = :name WHERE course=:course and email=:email", name=name, course=course,email=email)
+        elif (value[0]['status'] == 1):
+            name = db.execute("Select name from members WHERE course=:course and email=:email", course=course,email=email)[0]['name']
+        else:
+            return render_template("certification.html",error="Something went wrong contact us!")
+
+
+        course_name = db.execute("Select course_name from members WHERE course=:course and email=:email", course=course,email=email)[0]['course_name']
+        im = Image.open(r'empty.jpg')
+        d = ImageDraw.Draw(im)
+        location = (590-((len(name)/2)*19), 440)
+        text_color = (0, 0, 0)
+        font = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf", 28)
+        d.text(location, name, fill = text_color,font=font)
+        font = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf", 16)
+
+        text_color = (104, 104, 104)
+        course = "For active participation and successfully completing " + course_name + " course organized by"
+        location = (590-((len(course)/2)*9),545)
+        d.text(location,course,fill=text_color,font=font)
+        im.save("certifications" +"/" +email + ".pdf")
+        return send_file("certifications" +"/" +email + ".pdf", as_attachment=True)
+
+
 
 
 

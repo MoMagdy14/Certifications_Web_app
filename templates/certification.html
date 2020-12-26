@@ -6,6 +6,12 @@
 
 {% block main %}
 
+        <div class="alert alert-info" role="alert">
+         Please read carefully!<br>
+         - Use only English Characters.<br>
+         - You can generate your certification only once, So make sure you're typing your full name correctly.<br>
+         - Your email must match the email you used for registration.<br>
+         </div>
     <form action="/certification" method="post">
         <div class="form-group">
            <select name="course" >
@@ -28,5 +34,9 @@
             <input autocomplete="off" autofocus class="form-control" name="name" placeholder="Your full name in English" type="text">
         </div>
         <button class="btn btn-primary" type="submit" >Get Your Certification now!</button>
+
+
  </form>
+         <div> {{ error }}</div>
+
 {% endblock %}
