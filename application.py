@@ -52,7 +52,10 @@ def certification():
         course_name = db.execute("Select course_name from members WHERE course=:course and email=:email", course=course,email=email)[0]['course_name']
         im = Image.open(r'empty.jpg')
         d = ImageDraw.Draw(im)
-        location = (590-((len(name)/2)*19), 440)
+        if len(name) < 35:
+            location = (590-((len(name)/2)*19), 440)
+        else:
+            location = (590-((len(name)/2)*17), 440)
         text_color = (0, 0, 0)
         font = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf", 28)
         d.text(location, name, fill = text_color,font=font)
